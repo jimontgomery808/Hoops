@@ -58,13 +58,13 @@ public class ReadJSONCurrentGames
             int isHalfTime = obj.getInt("isHalfTime");           // half time
             int isEndOfQuarter = obj.getInt("isEndOfQuarter");  // end of quarter
             String vTeamAbrv = obj.getString("vTeamAbrv");                   // team name
-            String vTeamWinRecord = obj.getString("vWinRecord");;                       // # wins
-            String vTeamLossRecord = obj.getString("vLossRecord");                       // # losses
+            String vWinRecord = obj.getString("vWinRecord");;                       // # wins
+            String vLossRecord = obj.getString("vLossRecord");                       // # losses
             String vTeamScore = obj.getString("vTeamScore");                           // # current score
 
             String hTeamAbrv = obj.getString("hTeamAbrv");                   // team name
-            String hTeamWinRecord = obj.getString("hWinRecord");;                       // # wins
-            String hTeamLossRecord = obj.getString("hLossRecord");                       // # losses
+            String hWinRecord = obj.getString("hWinRecord");;                       // # wins
+            String hLossRecord = obj.getString("hLossRecord");                       // # losses
             String hTeamScore = obj.getString("hTeamScore");                           // # current score
 
 
@@ -74,8 +74,8 @@ public class ReadJSONCurrentGames
             String hTeamWatchLong = obj.getString("hTeamWatchLong");
 
             gameData = new GameData(gameIdNumber, getBoolean(isGameActivated), startTime, startDate, clock, Integer.valueOf(quarter), getBoolean(isHalfTime), getBoolean(isEndOfQuarter),
-                    vTeamAbrv, vTeamWinRecord, vTeamLossRecord, vTeamScore, hTeamAbrv, hTeamWinRecord,
-                    hTeamLossRecord, hTeamScore, vTeamWatchShort, vTeamWatchLong, hTeamWatchShort, hTeamWatchLong);
+                    vTeamAbrv, vWinRecord, vLossRecord, vTeamScore, hTeamAbrv, hWinRecord,
+                    hLossRecord, hTeamScore, vTeamWatchShort, vTeamWatchLong, hTeamWatchShort, hTeamWatchLong);
 
             //tv.setText(vTeamAbrv + ": " + vTeamScore + "          " + hTeamAbrv + ": " + hTeamScore + "                  Q" + quarter + "        " + clock);
             gameList.add(gameData);
