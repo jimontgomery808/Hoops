@@ -1,13 +1,6 @@
 package com.example.josh.hoops;
 
-import android.content.Context;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,15 +29,15 @@ public class ReadJSONCurrentGames
     {
         return gameList.size();
     }
-    public ArrayList<GameData> getGameList(Context context)
+    public ArrayList<GameData> getGameList()
     {
         return gameList;
     }
 
-    private void readJSON(String response) throws JSONException
+    public void readJSON() throws JSONException
     {
         //getting the whole json object from the response
-        JSONArray array = new JSONArray(response);
+        JSONArray array = new JSONArray(url);
         for(int i = 0; i < array.length(); i ++)
         {
             JSONObject obj = array.getJSONObject(i);
@@ -83,39 +76,39 @@ public class ReadJSONCurrentGames
 
     }
 
-    public void startRequest(Context context)
-    {
-        //creating a string request to send request to the url
-        stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response)
-                    {
-                        //hiding the progressbar after completion
-                        try
-                        {
-                            readJSON(response);
-                        }
-                        catch (JSONException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error)
-                    {
-                    }
-                });
-        //creating a request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        //adding the string request to request queue
-        requestQueue.add(stringRequest);
-
-}
+//    public void startRequest(Context context)
+//    {
+//        //creating a string request to send request to the url
+//        stringRequest = new StringRequest(Request.Method.GET, url,
+//                new Response.Listener<String>()
+//                {
+//                    @Override
+//                    public void onResponse(String response)
+//                    {
+//                        //hiding the progressbar after completion
+//                        try
+//                        {
+//                            //readJSON(response);
+//                        }
+//                        catch (JSONException e)
+//                        {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener()
+//                {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error)
+//                    {
+//                    }
+//                });
+//        //creating a request queue
+//        RequestQueue requestQueue = Volley.newRequestQueue(context);
+//        //adding the string request to request queue
+//        requestQueue.add(stringRequest);
+//
+//}
 
     private boolean getBoolean(int a)
     {
