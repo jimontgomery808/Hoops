@@ -10,10 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +31,26 @@ public class CurrentGames extends AppCompatActivity
     private GridLayoutManager gridLayoutManager;
     private RecyclerView rView;
     private ScoreboardAdapter scoreboardAdapter;
-
+    private TextView today;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_games);
 
+        setTitle("Live Games");
+        today = (TextView) findViewById(R.id.today);
+        long date = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+        String dateString = sdf.format(date);
+        today.setText(dateString);
         rView = (RecyclerView)findViewById(R.id.recycler_view);
+        rView.setNestedScrollingEnabled(false);
+        rView.setHasFixedSize(true);
+        rView.setItemViewCacheSize(20);
+        rView.setDrawingCacheEnabled(true);
+        rView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
         gridLayoutManager = new GridLayoutManager(CurrentGames.this,1);
         scoreboardAdapter = new ScoreboardAdapter(CurrentGames.this, gameList);
         rView.setHasFixedSize(true);
@@ -65,48 +79,12 @@ public class CurrentGames extends AppCompatActivity
                 }
 
                 gameList = jsonCurrentGames.getGameList();
-                //scoreboardAdapter = new ScoreboardAdapter(CurrentGames.this, gameList);
                 scoreboardAdapter.setItems(gameList);
                 scoreboardAdapter.notifyDataSetChanged();
-
-
-
-                //rView.setAdapter(scoreboardAdapter);
-               // fillTextView();
             }
         };
 
-
     }
-
-//    public void fillTextView()
-//    {
-//        String temp = "";
-//        for(int i = 0; i < gameList.size(); i ++)
-//        {
-//            String clock = "";
-//            if(gameList.get(i).isHalfTime())
-//            {
-//                clock = "Halftime";
-//            }
-//            else if(!gameList.get(i).isGameActivated() && gameList.get(i).getQuarter() == 0)
-//            {
-//                clock = "Tip off at " + gameList.get(i).getStartTime();
-//            }
-//            else if(gameList.get(i).getQuarter() == 4 && !gameList.get(i).isGameActivated())
-//            {
-//                clock = "Final";
-//            }
-//            else
-//            {
-//               clock = "Q" + String.valueOf(gameList.get(i).getQuarter()) + "     " + gameList.get(i).getClock();
-//            }
-//            temp += gameList.get(i).gethTeamAbrv() + ": " + gameList.get(i).gethTeamScore() +"\n" +
-//                    gameList.get(i).getvTeamAbrv() + ": " + gameList.get(i).getvTeamScore() +"\n" +
-//                    clock +"\n\n";
-//        }
-//        tv.setText(temp);
-//    }
 
     @Override
     protected void onPause()
@@ -123,8 +101,6 @@ public class CurrentGames extends AppCompatActivity
     {
         super.onResume();
 
-//        IntentFilter filter = new IntentFilter();
-//        registerReceiver(mMessageReceiver, new IntentFilter("JSON Info Update"));
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("JSON Info Update"));
         scheduledVolleyIntent = new Intent(this, ScheduledService.class);
         startService(scheduledVolleyIntent);
