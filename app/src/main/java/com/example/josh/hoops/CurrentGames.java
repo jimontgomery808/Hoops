@@ -38,9 +38,10 @@ public class CurrentGames extends AppCompatActivity
 
         rView = (RecyclerView)findViewById(R.id.recycler_view);
         gridLayoutManager = new GridLayoutManager(CurrentGames.this,1);
+        scoreboardAdapter = new ScoreboardAdapter(CurrentGames.this, gameList);
         rView.setHasFixedSize(true);
         rView.setLayoutManager(gridLayoutManager);
-
+        rView.setAdapter(scoreboardAdapter);
 
 
         Log.d("THE STATE IS", "CREATE");
@@ -64,8 +65,13 @@ public class CurrentGames extends AppCompatActivity
                 }
 
                 gameList = jsonCurrentGames.getGameList();
-                scoreboardAdapter = new ScoreboardAdapter(CurrentGames.this, gameList);
-                rView.setAdapter(scoreboardAdapter);
+                //scoreboardAdapter = new ScoreboardAdapter(CurrentGames.this, gameList);
+                scoreboardAdapter.setItems(gameList);
+                scoreboardAdapter.notifyDataSetChanged();
+
+
+
+                //rView.setAdapter(scoreboardAdapter);
                // fillTextView();
             }
         };

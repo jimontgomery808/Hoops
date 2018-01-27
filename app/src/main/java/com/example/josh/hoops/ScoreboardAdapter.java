@@ -61,17 +61,42 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         GameData gameData = gameList.get(position);
         String vRecord = ("(" + gameData.getvTeamWinRecord() + "-" + gameData.getvTeamLossRecord() + ")");
         String hRecord = ("(" + gameData.gethTeamWinRecord() + "-" + gameData.gethTeamLossRecord() + ")");
+        String vScore = gameData.getvTeamScore();
+        String hScore = gameData.gethTeamScore();
+        String clock = "";
+
+        if(gameData.isHalfTime())
+        {
+            clock = "Halftime";
+        }
+        else if(gameData.getQuarter() == 0)
+        {
+            clock = gameData.getStartTime();
+            vScore = "";
+            hScore = "";
+        }
+        else if(gameData.getQuarter() == 4 && !gameData.isGameActivated())
+        {
+            clock = "Final";
+        }
+        else
+        {
+           clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
+        }
 
         holder.vTeamName.setText(gameData.getvTeamAbrv());
         holder.hTeamName.setText(gameData.gethTeamAbrv());
         holder.vRecord.setText(vRecord);
         holder.hRecord.setText(hRecord);
-        holder.vScore.setText(gameData.getvTeamScore());
-        holder.hScore.setText(gameData.gethTeamScore());
-        holder.clock.setText(gameData.getClock());
+        holder.vScore.setText(vScore);
+        holder.hScore.setText(hScore);
+        holder.clock.setText(clock);
 
     }
-
+    public void setItems(List<GameData> persons)
+    {
+        this.gameList = persons;
+    }
     @Override
     public int getItemCount() {
         return gameList.size();
