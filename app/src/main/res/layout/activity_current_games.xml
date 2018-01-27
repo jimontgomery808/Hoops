@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.josh.hoops.CurrentGames">
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:scrollbars="vertical"
+    android:background="@color/colorPrimaryDark">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:maxLines = "1000"
-        android:id="@+id/tv"
-        android:text="Hello"
-        android:scrollbars = "vertical"/>
-
-</LinearLayout>
+</android.support.v7.widget.RecyclerView>

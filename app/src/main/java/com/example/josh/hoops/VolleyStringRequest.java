@@ -61,6 +61,8 @@ public class VolleyStringRequest
 
         return stringRequest;
     }
+
+
     private boolean getBoolean(int a)
     {
         if(a == 0)

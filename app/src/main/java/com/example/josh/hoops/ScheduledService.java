@@ -51,19 +51,21 @@ public class ScheduledService extends Service implements RequestHandler
                 volleyStringRequest = new VolleyStringRequest(rh);
                 rq.add(volleyStringRequest.startRequest());
             }
-        }, 0, 50000);//5 Minutes
+        }, 0, 5000);
     }
+
 
     @Override
     public void onDestroy()
     {
         super.onDestroy();
+        timer.cancel();
     }
 
     @Override
     public void onResponse(String resp)
     {
-        Log.d("here", resp);
+        Log.d("here", "gathered service");
         Intent intent = new Intent("JSON Info Update");
         intent.putExtra("JSONString", resp);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);

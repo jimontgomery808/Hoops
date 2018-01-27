@@ -76,40 +76,6 @@ public class ReadJSONCurrentGames
 
     }
 
-//    public void startRequest(Context context)
-//    {
-//        //creating a string request to send request to the url
-//        stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>()
-//                {
-//                    @Override
-//                    public void onResponse(String response)
-//                    {
-//                        //hiding the progressbar after completion
-//                        try
-//                        {
-//                            //readJSON(response);
-//                        }
-//                        catch (JSONException e)
-//                        {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener()
-//                {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error)
-//                    {
-//                    }
-//                });
-//        //creating a request queue
-//        RequestQueue requestQueue = Volley.newRequestQueue(context);
-//        //adding the string request to request queue
-//        requestQueue.add(stringRequest);
-//
-//}
-
     private boolean getBoolean(int a)
     {
         if(a == 0)

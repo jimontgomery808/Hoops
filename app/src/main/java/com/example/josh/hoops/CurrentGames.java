@@ -7,13 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +24,11 @@ public class CurrentGames extends AppCompatActivity
     private ReadJSONCurrentGames jsonCurrentGames;
     private List<GameData> gameList = new ArrayList<>();
     private TextView tv;
-    String str;
-    JSONObject obj = new JSONObject();
-    StringRequest stringRequest;
-    RequestHandler rh;
-    RequestQueue rq;
-    VolleyStringRequest volleyStringRequest;
+    private BroadcastReceiver mMessageReceiver;
+    private Intent scheduledVolleyIntent;
+    private GridLayoutManager gridLayoutManager;
+    private RecyclerView rView;
+    private ScoreboardAdapter scoreboardAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,33 +36,101 @@ public class CurrentGames extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_games);
 
-        Intent i= new Intent(this, ScheduledService.class);
-        this.startService(i);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("JSON Info Update"));
+        rView = (RecyclerView)findViewById(R.id.recycler_view);
+        gridLayoutManager = new GridLayoutManager(CurrentGames.this,1);
+        rView.setHasFixedSize(true);
+        rView.setLayoutManager(gridLayoutManager);
 
-        tv = (TextView) findViewById(R.id.tv);
+
+
+        Log.d("THE STATE IS", "CREATE");
+        mMessageReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("JSONString");
+                jsonCurrentGames = new ReadJSONCurrentGames(message);
+                try
+                {
+                    Log.d("here", "gathered broadcast receiver");
+                    jsonCurrentGames.readJSON();
+
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+                gameList = jsonCurrentGames.getGameList();
+                scoreboardAdapter = new ScoreboardAdapter(CurrentGames.this, gameList);
+                rView.setAdapter(scoreboardAdapter);
+               // fillTextView();
+            }
+        };
+
+
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            // Get extra data included in the Intent
-            String message = intent.getStringExtra("JSONString");
-            jsonCurrentGames = new ReadJSONCurrentGames(message);
-            try
-            {
-                jsonCurrentGames.readJSON();
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
+//    public void fillTextView()
+//    {
+//        String temp = "";
+//        for(int i = 0; i < gameList.size(); i ++)
+//        {
+//            String clock = "";
+//            if(gameList.get(i).isHalfTime())
+//            {
+//                clock = "Halftime";
+//            }
+//            else if(!gameList.get(i).isGameActivated() && gameList.get(i).getQuarter() == 0)
+//            {
+//                clock = "Tip off at " + gameList.get(i).getStartTime();
+//            }
+//            else if(gameList.get(i).getQuarter() == 4 && !gameList.get(i).isGameActivated())
+//            {
+//                clock = "Final";
+//            }
+//            else
+//            {
+//               clock = "Q" + String.valueOf(gameList.get(i).getQuarter()) + "     " + gameList.get(i).getClock();
+//            }
+//            temp += gameList.get(i).gethTeamAbrv() + ": " + gameList.get(i).gethTeamScore() +"\n" +
+//                    gameList.get(i).getvTeamAbrv() + ": " + gameList.get(i).getvTeamScore() +"\n" +
+//                    clock +"\n\n";
+//        }
+//        tv.setText(temp);
+//    }
 
-            gameList = jsonCurrentGames.getGameList();
-            tv.setText("Clock1 " + String.valueOf(gameList.get(0).getClock()) + "\n\nClock2 " + String.valueOf(gameList.get(1).getClock()));
-        }
-    };
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Log.d("THE STATE IS", "PAUSE");
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        //unregisterReceiver(mMessageReceiver);
+        stopService(scheduledVolleyIntent);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+//        IntentFilter filter = new IntentFilter();
+//        registerReceiver(mMessageReceiver, new IntentFilter("JSON Info Update"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("JSON Info Update"));
+        scheduledVolleyIntent = new Intent(this, ScheduledService.class);
+        startService(scheduledVolleyIntent);
+
+        Log.d("THE STATE IS", "RESUME");
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        Log.d("THE STATE IS", "DESTROY");
+    }
 }
 
