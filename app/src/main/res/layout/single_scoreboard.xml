@@ -1,155 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center">
 
-<android.support.v7.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardUseCompatPadding="true"
-    app:cardPreventCornerOverlap="false"
-    app:cardElevation="5dp"
-
-    android:background="@color/text_dark">
-
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/text_dark">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/hTeamLogo"
-        android:layout_width="60dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="88dp"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/vTeamLogo"
-        app:layout_constraintStart_toStartOf="@+id/vTeamLogo"
-        app:layout_constraintTop_toBottomOf="@+id/clock"
-        app:srcCompat="@mipmap/ic_launcher"/>
-
-    <TextView
-        android:id="@+id/hTeamAbrv"
-        android:layout_width="80dp"
-        android:layout_height="52dp"
-        android:text="TextView"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:textColor="@color/text_light"
-        app:layout_constraintEnd_toEndOf="@+id/vTeamAbrv"
-        app:layout_constraintStart_toStartOf="@+id/vTeamAbrv"
-        app:layout_constraintTop_toTopOf="@+id/hTeamLogo"/>
-
-    <TextView
-        android:id="@+id/hTeamRecord"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:textColor="@color/text_light"
-        app:layout_constraintEnd_toEndOf="@+id/vTeamRecord"
-        app:layout_constraintStart_toStartOf="@+id/vTeamRecord"
-        app:layout_constraintTop_toTopOf="@+id/guideline"/>
+        app:cardElevation="5dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
 
-    <TextView
-        android:id="@+id/hTeamScore"
-        android:layout_width="87dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="28dp"
-        android:layout_marginTop="76dp"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textColor="@color/text_light"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/hTeamAbrv"
-        app:layout_constraintEnd_toEndOf="@+id/vTeamScore"
-        app:layout_constraintStart_toStartOf="@+id/vTeamScore"
-        app:layout_constraintTop_toTopOf="@+id/guideline"/>
+        <android.support.constraint.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/vTeamLogo"
-        android:layout_width="60dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clock"
-        app:srcCompat="@mipmap/ic_launcher"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/hTeamLogo"
+                android:layout_width="60dp"
+                android:layout_height="51dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/vTeamLogo"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/vTeamLogo"
+                app:layout_constraintTop_toBottomOf="@+id/vTeamLogo"
+                app:srcCompat="@mipmap/ic_launcher"/>
 
-    <TextView
-        android:id="@+id/vTeamAbrv"
-        android:layout_width="80dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:textColor="@color/text_light"
-        android:textAlignment="center"
-        app:layout_constraintStart_toEndOf="@+id/vTeamLogo"
-        app:layout_constraintTop_toTopOf="@+id/guideline"/>
+            <TextView
+                android:id="@+id/hTeamAbrv"
+                android:layout_width="80dp"
+                android:layout_height="42dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@color/text_light"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/hTeamLogo"
+                app:layout_constraintEnd_toEndOf="@+id/vTeamAbrv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/vTeamAbrv"
+                app:layout_constraintTop_toTopOf="@+id/hTeamLogo"/>
 
-    <TextView
-        android:id="@+id/vTeamRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:textColor="@color/text_light"
-        app:layout_constraintStart_toEndOf="@+id/vTeamAbrv"
-        app:layout_constraintTop_toTopOf="@+id/guideline"/>
+            <TextView
+                android:id="@+id/hTeamRecord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@color/text_light"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/vTeamRecord"
+                app:layout_constraintStart_toStartOf="@+id/vTeamRecord"
+                app:layout_constraintTop_toTopOf="@+id/hTeamAbrv"/>
 
-    <TextView
-        android:id="@+id/vTeamScore"
-        android:layout_width="89dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="20dp"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textColor="@color/text_light"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/hTeamScore"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/vTeamRecord"
-        app:layout_constraintTop_toTopOf="@+id/guideline"/>
+            <TextView
+                android:id="@+id/hTeamScore"
+                android:layout_width="87dp"
+                android:layout_height="56dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@color/text_light"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/hTeamAbrv"
+                app:layout_constraintEnd_toEndOf="@+id/vTeamScore"
+                app:layout_constraintStart_toStartOf="@+id/vTeamScore"
+                app:layout_constraintTop_toTopOf="@+id/hTeamAbrv"/>
 
-    <TextView
-        android:id="@+id/clock"
-        android:layout_width="116dp"
-        android:layout_height="22dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginStart="10dp"
-        android:text="TextView"
-        android:textStyle="bold"
-        android:textSize="17sp"
-        android:textColor="@color/clock"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintStart_toStartOf="parent"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/vTeamLogo"
+                android:layout_width="60dp"
+                android:layout_height="51dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/clock"
+                app:srcCompat="@mipmap/ic_launcher"/>
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="50dp"/>
+            <TextView
+                android:id="@+id/vTeamAbrv"
+                android:layout_width="80dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="8dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@color/text_light"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/vTeamLogo"
+                app:layout_constraintStart_toEndOf="@+id/vTeamLogo"
+                app:layout_constraintTop_toTopOf="@+id/vTeamLogo"/>
 
-    </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+
+            <TextView
+                android:id="@+id/vTeamRecord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@color/text_light"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/vTeamAbrv"
+                app:layout_constraintTop_toTopOf="@+id/vTeamAbrv"/>
+
+            <TextView
+                android:id="@+id/vTeamScore"
+                android:layout_width="89dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="20dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@color/text_light"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/vTeamAbrv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/vTeamRecord"
+                app:layout_constraintTop_toTopOf="@+id/vTeamAbrv"/>
+
+            <TextView
+                android:id="@+id/clock"
+                android:layout_width="116dp"
+                android:layout_height="26dp"
+                android:layout_marginTop="4dp"
+                android:text="TextView"
+                android:textColor="@color/clock"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/vTeamLogo"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/broadcast"
+                android:layout_width="86dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="TextView"
+                android:textAlignment="textEnd"
+                android:textColor="@color/text_light"
+                app:layout_constraintStart_toStartOf="@+id/vTeamScore"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.example.josh.hoops;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         TextView vScore;
         TextView hScore;
         TextView clock;
+        TextView broadcast;
 
 
         public MyViewHolder(View view)
@@ -43,6 +43,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
             vScore = (TextView) view.findViewById(R.id.vTeamScore);
             hScore = (TextView) view.findViewById(R.id.hTeamScore);
             clock = (TextView) view.findViewById(R.id.clock);
+            broadcast = (TextView) view.findViewById(R.id.broadcast);
         }
     }
 
@@ -51,6 +52,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         int vTeamResource = 0;
         int hTeamResource = 0;
 
+        logoList.clear();
         for(int i = 0; i < gameList.size(); i ++)
         {
             vTeamResource = setLogo(gameList.get(i).getvTeamAbrv());
@@ -66,7 +68,6 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         this.gameList = list;
         logoList = new ArrayList<>();
         initLogoList();
-        Log.d("marcel", String.valueOf(logoList.size()));
     }
 
     @Override
@@ -88,7 +89,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         String vScore = gameData.getvTeamScore();
         String hScore = gameData.gethTeamScore();
         String clock = "";
-
+        String broadcast = "";
         if(gameData.isHalfTime())
         {
             clock = "Halftime";
@@ -103,16 +104,28 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         {
             clock = "Final";
         }
+        else if(gameData.getClock().equals("0.0"))
+        {
+            clock = "End of Q" + gameData.getQuarter();
+        }
         else
         {
-           clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
+            clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
+        }
+        if(gameData.getvTeamWatchShort().equals(gameData.gethTeamWatchShort()))
+        {
+            broadcast = gameData.getvTeamWatchShort();
+        }
+        else
+        {
+            broadcast = gameData.getvTeamWatchShort() + "\n" + gameData.gethTeamWatchShort();
         }
 
-        holder.vTeamLogo.setImageResource(setLogo(gameData.getvTeamAbrv()));
-        holder.hTeamLogo.setImageResource(setLogo(gameData.gethTeamAbrv()));
+//        holder.vTeamLogo.setImageResource(setLogo(gameData.getvTeamAbrv()));
+//        holder.hTeamLogo.setImageResource(setLogo(gameData.gethTeamAbrv()));
 
-//        holder.vTeamLogo.setImageResource(logoList.get(position * 2));
-//        holder.hTeamLogo.setImageResource(logoList.get((position *2) + 1));
+        holder.vTeamLogo.setImageResource(logoList.get(position * 2));
+        holder.hTeamLogo.setImageResource(logoList.get((position *2) + 1));
         holder.vTeamName.setText(gameData.getvTeamAbrv());
         holder.hTeamName.setText(gameData.gethTeamAbrv());
         holder.vRecord.setText(vRecord);
@@ -120,6 +133,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         holder.vScore.setText(vScore);
         holder.hScore.setText(hScore);
         holder.clock.setText(clock);
+        holder.broadcast.setText(broadcast);
 
     }
     public void setItems(List<GameData> persons)
@@ -127,7 +141,6 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         this.gameList = persons;
         logoList = new ArrayList<>();
         initLogoList();
-        Log.d("marcel", String.valueOf(logoList.size()));
     }
     @Override
     public int getItemCount() {

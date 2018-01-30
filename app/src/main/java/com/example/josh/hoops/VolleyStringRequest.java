@@ -22,11 +22,14 @@ public class VolleyStringRequest
     private GameData gameData;
     private RequestHandler requestHandler;
     private String value;
-    private String url = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/currentGames.php";
+    private Boolean isToday;
+    private String url;
 
-    public VolleyStringRequest(RequestHandler rh)
+    public VolleyStringRequest(RequestHandler rh, String date)
     {
         requestHandler = rh;
+        url = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/currentGames.php?dateStr=" + date;
+
     }
 
     public StringRequest startRequest()
@@ -38,7 +41,6 @@ public class VolleyStringRequest
                     @Override
                     public void onResponse(String response)
                     {
-                        //hiding the progressbar after completion
                         try
                         {
                             JSONArray array = new JSONArray(response);
