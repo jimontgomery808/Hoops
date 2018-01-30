@@ -8,14 +8,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.MyViewHolder>
 {
     private Context mContext;
     private List<GameData> gameList;
-    private List<Integer> logoList;
-
+    private List<String> vLogoList;
+    private List<String> hLogoList;
+    private String url1 = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/";
+    private String url2 = ".png";
 
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
@@ -47,29 +51,33 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         }
     }
 
-    public void initLogoList()
-    {
-        int vTeamResource = 0;
-        int hTeamResource = 0;
-
-        logoList.clear();
-        for(int i = 0; i < gameList.size(); i ++)
-        {
-            vTeamResource = setLogo(gameList.get(i).getvTeamAbrv());
-            hTeamResource = setLogo(gameList.get(i).gethTeamAbrv());
-
-            logoList.add(vTeamResource);
-            logoList.add(hTeamResource);
-        }
-    }
     public ScoreboardAdapter(Context mContext, List<GameData> list)
     {
         this.mContext = mContext;
         this.gameList = list;
-        logoList = new ArrayList<>();
+        vLogoList = new ArrayList<>();
+        hLogoList = new ArrayList<>();
+
         initLogoList();
     }
 
+    public void initLogoList()
+    {
+        String vTeamResource = "";
+        String hTeamResource = "";
+
+        vLogoList.clear();
+        hLogoList.clear();
+
+        for(int i = 0; i < gameList.size(); i ++)
+        {
+            vTeamResource = getLogo(gameList.get(i).getvTeamAbrv());
+            hTeamResource = getLogo(gameList.get(i).gethTeamAbrv());
+
+            vLogoList.add(url1 + vTeamResource + url2);
+            hLogoList.add(url1 + hTeamResource + url2);
+        }
+    }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -90,6 +98,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         String hScore = gameData.gethTeamScore();
         String clock = "";
         String broadcast = "";
+
         if(gameData.isHalfTime())
         {
             clock = "Halftime";
@@ -108,6 +117,24 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         {
             clock = "End of Q" + gameData.getQuarter();
         }
+        else if(gameData.getQuarter() > 4)
+        {
+            switch(gameData.getQuarter())
+            {
+                case(5): clock = "1OT";
+                break;
+                case(6): clock = "2OT";
+                break;
+                case(7): clock = "3OT";
+                    break;
+                case(8): clock = "4OT";
+                    break;
+                case(9): clock = "5OT";
+                    break;
+                case(10): clock = "6OT";
+                    break;
+            }
+        }
         else
         {
             clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
@@ -121,11 +148,10 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
             broadcast = gameData.getvTeamWatchShort() + "\n" + gameData.gethTeamWatchShort();
         }
 
-//        holder.vTeamLogo.setImageResource(setLogo(gameData.getvTeamAbrv()));
-//        holder.hTeamLogo.setImageResource(setLogo(gameData.gethTeamAbrv()));
-
-        holder.vTeamLogo.setImageResource(logoList.get(position * 2));
-        holder.hTeamLogo.setImageResource(logoList.get((position *2) + 1));
+        Picasso.with(mContext).load(vLogoList.get(position)).into(holder.vTeamLogo);
+        Picasso.with(mContext).load(hLogoList.get(position)).into(holder.hTeamLogo);
+//        holder.vTeamLogo.setImageResource(logoList.get(position * 2));
+//        holder.hTeamLogo.setImageResource(logoList.get((position *2) + 1));
         holder.vTeamName.setText(gameData.getvTeamAbrv());
         holder.hTeamName.setText(gameData.gethTeamAbrv());
         holder.vRecord.setText(vRecord);
@@ -139,80 +165,79 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
     public void setItems(List<GameData> persons)
     {
         this.gameList = persons;
-        logoList = new ArrayList<>();
+        vLogoList = new ArrayList<>();
+        hLogoList = new ArrayList<>();
+
         initLogoList();
     }
     @Override
     public int getItemCount() {
         return gameList.size();
     }
-    public int setLogo(String abrv)
+    public String getLogo(String abrv)
     {
-        int logo = 0;
         switch(abrv)
-        {
-            case("ATL"): logo = R.drawable.hawks;
-                break;
-            case("BKN"):logo =(R.drawable.nets);
-                break;
-            case("BOS"):logo =(R.drawable.celtics);
-                break;
-            case("CHA"):logo =(R.drawable.hornets);
-                break;
-            case("CHI"):logo =(R.drawable.bulls);
-                break;
-            case("CLE"):logo =(R.drawable.cavs);
-                break;
-            case("DAL"):logo =(R.drawable.mavericks);
-                break;
-            case("DEN"):logo =(R.drawable.nuggets);
-                break;
-            case("DET"):logo =(R.drawable.pistons);
-                break;
-            case("GSW"):logo =(R.drawable.warriors);
-                break;
-            case("HOU"):logo =(R.drawable.rockets);
-                break;
-            case("IND"):logo =(R.drawable.pacers);
-                break;
-            case("LAC"):logo =(R.drawable.clippers);
-                break;
-            case("LAL"):logo =(R.drawable.lakers);
-                break;
-            case("MEM"):logo =(R.drawable.grizzlies);
-                break;
-            case("MIA"):logo =(R.drawable.heat);
-                break;
-            case("MIL"):logo =(R.drawable.bucks);
-                break;
-            case("MIN"):logo =(R.drawable.twolves);
-                break;
-            case("NOP"):logo =(R.drawable.pels);
-                break;
-            case("NYK"):logo =(R.drawable.knicks);
-                break;
-            case("OKC"):logo =(R.drawable.thunder);
-                break;
-            case("ORL"):logo =(R.drawable.magic);
-                break;
-            case("PHI"):logo =(R.drawable.sixers);
-                break;
-            case("PHX"):logo =(R.drawable.suns);
-                break;
-            case("POR"):logo =(R.drawable.blazers);
-                break;
-            case("SAC"):logo =(R.drawable.kings);
-                break;
-            case("SAS"):logo =(R.drawable.spurs);
-                break;
-            case("TOR"):logo =(R.drawable.raptors);
-                break;
-            case("UTA"):logo =(R.drawable.jazz);
-                break;
-            case("WAS"):logo =(R.drawable.wizards);
-                break;
-        }
+        {case("ATL"): return "hawks";
 
-        return logo;
+            case("BKN"): return "nets";
+
+            case("BOS"):return "celtics";
+
+            case("CHA"):return "hornets";
+
+            case("CHI"):return "bulls";
+
+            case("CLE"):return "cavs";
+
+            case("DAL"):return "mavericks";
+
+            case("DEN"):return "nuggets";
+
+            case("DET"):return "pistons";
+
+            case("GSW"):return "warriors";
+
+            case("HOU"):return "rockets";
+
+            case("IND"):return "pacers";
+
+            case("LAC"):return "clippers";
+
+            case("LAL"):return "lakers";
+
+            case("MEM"):return "grizzlies";
+
+            case("MIA"):return "heat";
+
+            case("MIL"):return "bucks";
+
+            case("MIN"):return "twolves";
+
+            case("NOP"):return "pels";
+
+            case("NYK"):return "knicks";
+
+            case("OKC"):return "thunder";
+
+            case("ORL"):return "magic";
+
+            case("PHI"):return "sixers";
+
+            case("PHX"):return "suns";
+
+            case("POR"):return "blazers";
+
+            case("SAC"):return "kings";
+
+            case("SAS"):return "spurs";
+
+            case("TOR"):return "raptors";
+
+            case("UTA"):return "jazz";
+
+            case("WAS"):return "wizards";
+
+            default: return "";
+        }
     }
 }
