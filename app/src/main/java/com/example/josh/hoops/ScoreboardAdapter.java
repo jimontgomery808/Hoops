@@ -1,13 +1,17 @@
 package com.example.josh.hoops;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -16,10 +20,15 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
 {
     private Context mContext;
     private List<GameData> gameList;
+    private List<String> prevVScore;
+    private List<String> prevHScore;
     private List<String> vLogoList;
     private List<String> hLogoList;
+    private List<String> prevVTeam;
+    private List<String> prevHTeam;
     private String url1 = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/";
     private String url2 = ".png";
+    private boolean isLive;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
@@ -33,7 +42,6 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         TextView hScore;
         TextView clock;
         TextView broadcast;
-
 
         public MyViewHolder(View view)
         {
@@ -58,6 +66,8 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         vLogoList = new ArrayList<>();
         hLogoList = new ArrayList<>();
 
+        prevVScore = new ArrayList<>();
+        prevHScore = new ArrayList<>();
         initLogoList();
     }
 
@@ -76,6 +86,9 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
 
             vLogoList.add(url1 + vTeamResource + url2);
             hLogoList.add(url1 + hTeamResource + url2);
+
+            prevVScore.add(gameList.get(i).getvTeamScore());
+            prevHScore.add(gameList.get(i).gethTeamScore());
         }
     }
     @Override
@@ -83,81 +96,87 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
     {
 
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.single_scoreboard, null);
+                .inflate(R.layout.single_scoreboard, null, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position)
+    public void onBindViewHolder(final MyViewHolder holder, int position)
     {
         GameData gameData = gameList.get(position);
         String vRecord = ("(" + gameData.getvTeamWinRecord() + "-" + gameData.getvTeamLossRecord() + ")");
         String hRecord = ("(" + gameData.gethTeamWinRecord() + "-" + gameData.gethTeamLossRecord() + ")");
-        String vScore = gameData.getvTeamScore();
-        String hScore = gameData.gethTeamScore();
-        String clock = "";
-        String broadcast = "";
+        final String vScore;
+        final String hScore;
 
-        if(gameData.isHalfTime())
+        if(gameData.getQuarter() == 0)
         {
-            clock = "Halftime";
-        }
-        else if(gameData.getQuarter() == 0)
-        {
-            clock = gameData.getStartTime();
             vScore = "";
             hScore = "";
         }
-        else if(gameData.getQuarter() == 4 && !gameData.isGameActivated())
-        {
-            clock = "Final";
-        }
-        else if(gameData.getClock().equals("0.0"))
-        {
-            clock = "End of Q" + gameData.getQuarter();
-        }
-        else if(gameData.getQuarter() > 4)
-        {
-            switch(gameData.getQuarter())
-            {
-                case(5): clock = "1OT";
-                break;
-                case(6): clock = "2OT";
-                break;
-                case(7): clock = "3OT";
-                    break;
-                case(8): clock = "4OT";
-                    break;
-                case(9): clock = "5OT";
-                    break;
-                case(10): clock = "6OT";
-                    break;
-            }
-        }
         else
         {
-            clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
+            vScore = gameData.getvTeamScore();
+            hScore = gameData.gethTeamScore();
         }
-        if(gameData.getvTeamWatchShort().equals(gameData.gethTeamWatchShort()))
-        {
-            broadcast = gameData.getvTeamWatchShort();
-        }
-        else
-        {
-            broadcast = gameData.getvTeamWatchShort() + "\n" + gameData.gethTeamWatchShort();
-        }
+
+
+        String broadcast = getBroadcast(gameData);
+        String clock = getClock(gameData);
+
+        Picasso.with(mContext).load(hLogoList.get(position)).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.hTeamLogo);
+        Picasso.with(mContext).load(vLogoList.get(position)).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.vTeamLogo);
 
         Picasso.with(mContext).load(vLogoList.get(position)).into(holder.vTeamLogo);
         Picasso.with(mContext).load(hLogoList.get(position)).into(holder.hTeamLogo);
-//        holder.vTeamLogo.setImageResource(logoList.get(position * 2));
-//        holder.hTeamLogo.setImageResource(logoList.get((position *2) + 1));
+
         holder.vTeamName.setText(gameData.getvTeamAbrv());
         holder.hTeamName.setText(gameData.gethTeamAbrv());
         holder.vRecord.setText(vRecord);
         holder.hRecord.setText(hRecord);
+
         holder.vScore.setText(vScore);
+        if(position == 1)
+            Toast.makeText(mContext, prevHScore.get(position), Toast.LENGTH_LONG).show();
+
+        if(!vScore.equals(prevVScore.get(position)) && !prevVScore.get(position).isEmpty())
+        {
+            holder.vScore.setTextColor(Color.RED);
+            holder.vScore.animate().setDuration(2000).withEndAction(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    // set color back to normal
+                    holder.vScore.setTextColor(Color.parseColor("#BDBDBD"));
+                }
+            }).start();
+        }
+        prevVScore.set(position,vScore);
+
+
         holder.hScore.setText(hScore);
+
+        if(!hScore.equals(prevHScore.get(position)) && !prevHScore.get(position).isEmpty())
+        {
+            holder.hScore.setTextColor(Color.RED);
+            holder.hScore.animate().setDuration(2000).withEndAction(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    // set color back to normal
+                    holder.hScore.setTextColor(Color.parseColor("#BDBDBD"));
+                }
+            }).start();
+        }
+
+        prevHScore.set(position, gameData.gethTeamScore());
+
+
         holder.clock.setText(clock);
         holder.broadcast.setText(broadcast);
 
@@ -240,4 +259,78 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
             default: return "";
         }
     }
+
+    public String getBroadcast(GameData gameData)
+    {
+        String broadcast = "";
+        if(gameData.getvTeamWatchShort().equals(gameData.gethTeamWatchShort()))
+        {
+            broadcast = gameData.getvTeamWatchShort();
+        }
+        else
+        {
+            broadcast = gameData.getvTeamWatchShort() + "\n" + gameData.gethTeamWatchShort();
+        }
+
+        return broadcast;
+    }
+
+    public String getClock(GameData gameData)
+    {
+        String clock = "";
+        String overTime = "";
+
+        if(gameData.getQuarter() == 0)
+        {
+            clock = gameData.getStartTime();
+        }
+        else if(gameData.isHalfTime())
+        {
+            clock = "Halftime";
+        }
+        else if(gameData.getQuarter() == 4 && !gameData.isGameActivated())
+        {
+            clock = "Final";
+        }
+        else if(gameData.getQuarter() > 4)
+        {
+            switch(gameData.getQuarter())
+            {
+                case(5): overTime = "1OT";
+                    break;
+                case(6): overTime = "2OT";
+                    break;
+                case(7): overTime = "3OT";
+                    break;
+                case(8): overTime = "4OT";
+                    break;
+                case(9): overTime = "5OT";
+                    break;
+                case(10): overTime = "6OT";
+                    break;
+            }
+
+            if(gameData.isGameActivated())
+            {
+                clock = overTime;
+            }
+            else
+            {
+                clock = "Final " + overTime;
+            }
+        }
+
+        else if(gameData.getClock().equals("0.0"))
+        {
+            clock = "End of Q" + gameData.getQuarter();
+        }
+
+        else
+        {
+            clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
+        }
+
+        return clock;
+    }
+
 }

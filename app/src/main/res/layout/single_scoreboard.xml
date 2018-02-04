@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center">
-
     <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:cardUseCompatPadding="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="5dp"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="true">
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        app:cardElevation="3dp"
+        app:cardCornerRadius="3dp"
+    >
 
         <android.support.constraint.ConstraintLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,9 +17,9 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background">
+            android:background="@color/scoreboard">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/hTeamLogo"
                 android:layout_width="60dp"
                 android:layout_height="51dp"
@@ -78,7 +75,7 @@
                 app:layout_constraintStart_toStartOf="@+id/vTeamScore"
                 app:layout_constraintTop_toTopOf="@+id/hTeamAbrv"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/vTeamLogo"
                 android:layout_width="60dp"
                 android:layout_height="51dp"
@@ -137,7 +134,7 @@
                 android:layout_height="26dp"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
-                android:textColor="@color/clock"
+                android:textColor="@color/text_light"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/vTeamLogo"
@@ -157,4 +154,3 @@
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-</LinearLayout>

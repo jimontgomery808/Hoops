@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,7 +55,9 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
     private String todayString;
     private RequestHandler requestHandler;
     private RequestQueue requestQueue;
-
+    private TextView noGames;
+    private Toolbar actionBar;
+    private DrawerLayout sideBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -65,7 +68,7 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
         requestHandler = this;
         todayDate = Calendar.getInstance().getTime();
         initWidgets();
-
+        initLayouts();
         formatDates();
 
         prevButton.setOnClickListener(new View.OnClickListener()
@@ -73,6 +76,7 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
             @Override
             public void onClick(View view)
             {
+
                 Calendar cal = Calendar.getInstance();
                 try
                 {
@@ -152,8 +156,6 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
                 requestQueue.add(volley.startRequest());
             }
         });
-
-        initLayouts();
         mMessageReceiver = new BroadcastReceiver()
         {
             @Override
@@ -220,22 +222,29 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
     @Override
     public void onResponse(String resp)
     {
+
+        noGames.setVisibility(View.INVISIBLE);
         Log.d("here", "marcel");
         jsonCurrentGames = new ReadJSONCurrentGames(resp);
+        gameList.clear();
+        scoreboardAdapter.notifyDataSetChanged();
+
         try
         {
-            scoreboardAdapter.setItems(gameList);
-            scoreboardAdapter.notifyDataSetChanged();
             jsonCurrentGames.readJSON();
+            gameList = jsonCurrentGames.getGameList();
 
         } catch (JSONException e)
         {
             e.printStackTrace();
         }
 
-        gameList = jsonCurrentGames.getGameList();
         scoreboardAdapter.setItems(gameList);
         scoreboardAdapter.notifyDataSetChanged();
+        if(gameList.isEmpty())
+        {
+            noGames.setVisibility(View.VISIBLE);
+        }
     }
 
     protected void formatDates()
@@ -252,7 +261,10 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
         prevButton = (Button) findViewById(R.id.prevBttn);
         nextButton = (Button) findViewById(R.id.nextBttn);
         todayButton = (Button) findViewById(R.id.todayBttn);
+        noGames = (TextView) findViewById(R.id.noGames);
+        noGames.setVisibility(View.INVISIBLE);
     }
+
 
     protected void initLayouts()
     {
