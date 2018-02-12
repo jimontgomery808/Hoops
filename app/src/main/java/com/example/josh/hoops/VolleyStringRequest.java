@@ -25,11 +25,15 @@ public class VolleyStringRequest
     private Boolean isToday;
     private String url;
 
-    public VolleyStringRequest(RequestHandler rh, String date)
+//    public VolleyStringRequest(RequestHandler rh, String url, String date)
+//    {
+//        requestHandler = rh;
+//        this.url = url + date;
+//    }
+    public VolleyStringRequest(RequestHandler rh, String url)
     {
         requestHandler = rh;
-        url = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/currentGames.php?dateStr=" + date;
-
+        this. url = url;
     }
 
     public StringRequest startRequest()

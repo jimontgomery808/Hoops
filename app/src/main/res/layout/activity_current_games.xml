@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
        <include
         android:id="@+id/toolbar"
         layout="@layout/action_bar" />
@@ -22,8 +21,6 @@
         <include
             android:id="@+id/toolbar"
             layout="@layout/current_games_toolbar" />
-
-
     </android.support.design.widget.AppBarLayout>
 
 

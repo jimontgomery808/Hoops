@@ -1,17 +1,13 @@
 package com.example.josh.hoops;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -24,11 +20,14 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
     private List<String> prevHScore;
     private List<String> vLogoList;
     private List<String> hLogoList;
-    private List<String> prevVTeam;
-    private List<String> prevHTeam;
     private String url1 = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/";
     private String url2 = ".png";
-    private boolean isLive;
+
+    public void clearPreviousTeams()
+    {
+        prevVScore.clear();
+        prevHScore.clear();
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
@@ -125,8 +124,8 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         String broadcast = getBroadcast(gameData);
         String clock = getClock(gameData);
 
-        Picasso.with(mContext).load(hLogoList.get(position)).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.hTeamLogo);
-        Picasso.with(mContext).load(vLogoList.get(position)).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.vTeamLogo);
+//        Picasso.with(mContext).load(hLogoList.get(position)).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.hTeamLogo);
+//        Picasso.with(mContext).load(vLogoList.get(position)).memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).into(holder.vTeamLogo);
 
         Picasso.with(mContext).load(vLogoList.get(position)).into(holder.vTeamLogo);
         Picasso.with(mContext).load(hLogoList.get(position)).into(holder.hTeamLogo);
@@ -137,45 +136,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         holder.hRecord.setText(hRecord);
 
         holder.vScore.setText(vScore);
-        if(position == 1)
-            Toast.makeText(mContext, prevHScore.get(position), Toast.LENGTH_LONG).show();
-
-        if(!vScore.equals(prevVScore.get(position)) && !prevVScore.get(position).isEmpty())
-        {
-            holder.vScore.setTextColor(Color.RED);
-            holder.vScore.animate().setDuration(2000).withEndAction(new Runnable()
-            {
-
-                @Override
-                public void run()
-                {
-                    // set color back to normal
-                    holder.vScore.setTextColor(Color.parseColor("#BDBDBD"));
-                }
-            }).start();
-        }
-        prevVScore.set(position,vScore);
-
-
         holder.hScore.setText(hScore);
-
-        if(!hScore.equals(prevHScore.get(position)) && !prevHScore.get(position).isEmpty())
-        {
-            holder.hScore.setTextColor(Color.RED);
-            holder.hScore.animate().setDuration(2000).withEndAction(new Runnable()
-            {
-
-                @Override
-                public void run()
-                {
-                    // set color back to normal
-                    holder.hScore.setTextColor(Color.parseColor("#BDBDBD"));
-                }
-            }).start();
-        }
-
-        prevHScore.set(position, gameData.gethTeamScore());
-
 
         holder.clock.setText(clock);
         holder.broadcast.setText(broadcast);
@@ -312,7 +273,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
 
             if(gameData.isGameActivated())
             {
-                clock = overTime;
+                clock = overTime + " " + gameData.getClock();
             }
             else
             {

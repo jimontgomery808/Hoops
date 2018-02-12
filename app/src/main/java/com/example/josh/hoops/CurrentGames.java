@@ -1,14 +1,14 @@
 package com.example.josh.hoops;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toolbar;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -32,18 +29,13 @@ import java.util.List;
 
 public class CurrentGames extends AppCompatActivity implements RequestHandler
 {
-    private SharedPreferences prefs = null;
-    private GameData gameData;
-    private String url = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/currentGames.php";
-    private ReadJSONCurrentGames jsonCurrentGames;
+    private ReadJSONGamesInfo jsonCurrentGames;
     private List<GameData> gameList = new ArrayList<>();
-    private TextView tv;
     private BroadcastReceiver mMessageReceiver;
     private Intent scheduledVolleyIntent;
     private GridLayoutManager gridLayoutManager;
     private RecyclerView rView;
     private ScoreboardAdapter scoreboardAdapter;
-    private Toolbar mToolbar;
     private String savedJson = "";
     private Button prevButton;
     private Button nextButton;
@@ -51,32 +43,37 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
     private Date todayDate;
     private SimpleDateFormat dateBttnFormatter = new SimpleDateFormat("MMM dd, yyyy");
     private SimpleDateFormat urlFormatter = new SimpleDateFormat("yyyyMMdd");
-    private String urlString;
+    private String urlDateString;
+    private String urlString =  "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/currentGames.php?dateStr=";
     private String todayString;
-    private RequestHandler requestHandler;
-    private RequestQueue requestQueue;
     private TextView noGames;
-    private Toolbar actionBar;
-    private DrawerLayout sideBar;
+    private LocalDB localDB;
+    private long lastClickTime = 0;
+    private List<GameData> nonLiveGames;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_games);
         setTitle("Live Games");
-        requestHandler = this;
         todayDate = Calendar.getInstance().getTime();
         initWidgets();
         initLayouts();
         formatDates();
+        localDB = LocalDB.getInstance();
 
         prevButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-
+                if (SystemClock.elapsedRealtime() - lastClickTime < 10)
+                {
+                    return;
+                }
+                lastClickTime = SystemClock.elapsedRealtime();
                 Calendar cal = Calendar.getInstance();
                 try
                 {
@@ -89,38 +86,38 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
 
                 cal.add(Calendar.DATE, -1);
                 todayDate = cal.getTime();
+                urlDateString = urlFormatter.format(todayDate);
                 formatDates();
+                setDateButton();
 
-                String checkStr1 = dateBttnFormatter.format(todayDate);
-                String checkStr2 = dateBttnFormatter.format(Calendar.getInstance().getTime());
-
-
-                if(!checkStr1.equals(checkStr2))
+                if(!todayButton.getText().equals("Today"))
                 {
                     stopService(scheduledVolleyIntent);
+                    List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
+                    scoreboardAdapter.setItems(nonLiveGames);
+                    scoreboardAdapter.notifyDataSetChanged();
                 }
                 else
                 {
+                    scoreboardAdapter.setItems(gameList);
+                    scoreboardAdapter.notifyDataSetChanged();
                     startService(scheduledVolleyIntent);
+                    //cachedList.clear();
                 }
-
-
-                formatDates();
-                requestQueue = Volley.newRequestQueue(CurrentGames.this);
-
-                Intent intent = new Intent(CurrentGames.this, ScheduledService.class);
-                intent.putExtra("data", todayString);
-
-                VolleyStringRequest volley = new VolleyStringRequest(requestHandler, urlString);
-                requestQueue.add(volley.startRequest());
             }
         });
+
 
         nextButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
+                if (SystemClock.elapsedRealtime() - lastClickTime < 10){
+                    return;
+                }
+                lastClickTime = SystemClock.elapsedRealtime();
+
                 Calendar cal = Calendar.getInstance();
                 try
                 {
@@ -133,27 +130,25 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
 
                 cal.add(Calendar.DATE, 1);
                 todayDate = cal.getTime();
+                urlDateString = urlFormatter.format(todayDate);
                 formatDates();
+                setDateButton();
 
-                String checkStr1 = dateBttnFormatter.format(todayDate);
-                String checkStr2 = dateBttnFormatter.format(Calendar.getInstance().getTime());
 
-                if(!checkStr1.equals(checkStr2))
+                if(!todayButton.getText().equals("Today"))
                 {
                     stopService(scheduledVolleyIntent);
+                    List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
+                    scoreboardAdapter.setItems(nonLiveGames);
+                    scoreboardAdapter.notifyDataSetChanged();
                 }
                 else
                 {
+                    scoreboardAdapter.setItems(gameList);
+                    scoreboardAdapter.notifyDataSetChanged();
                     startService(scheduledVolleyIntent);
+                    //cachedList.clear();
                 }
-
-                requestQueue = Volley.newRequestQueue(CurrentGames.this);
-
-                Intent intent = new Intent(CurrentGames.this, ScheduledService.class);
-                intent.putExtra("data", todayString);
-
-                VolleyStringRequest volley = new VolleyStringRequest(requestHandler, urlString);
-                requestQueue.add(volley.startRequest());
             }
         });
         mMessageReceiver = new BroadcastReceiver()
@@ -163,25 +158,26 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
             {
                 // Get extra data included in the Intent
                 String message = intent.getStringExtra("JSONString");
-                savedJson = message;
-                jsonCurrentGames = new ReadJSONCurrentGames(message);
+
+                jsonCurrentGames = new ReadJSONGamesInfo(message);
                 try
                 {
-                    scoreboardAdapter.setItems(gameList);
-                    scoreboardAdapter.notifyDataSetChanged();
                     jsonCurrentGames.readJSON();
-
-                } catch (JSONException e)
+                }
+                catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
 
                 gameList = jsonCurrentGames.getGameList();
-                scoreboardAdapter.setItems(gameList);
-                scoreboardAdapter.notifyDataSetChanged();
+                if(todayButton.getText().equals("Today"))
+                {
+                    Toast.makeText(getApplicationContext(), "updating rView", Toast.LENGTH_LONG).show();
+                    scoreboardAdapter.setItems(gameList);
+                    scoreboardAdapter.notifyDataSetChanged();
+                }
             }
         };
-
     }
 
     @Override
@@ -204,13 +200,10 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
     protected void onResume()
     {
         super.onResume();
-
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("JSON Info Update"));
         scheduledVolleyIntent = new Intent(this, ScheduledService.class);
-        scheduledVolleyIntent.putExtra("URL", urlString);
+        scheduledVolleyIntent.putExtra("URL", urlString + urlDateString);
         startService(scheduledVolleyIntent);
-
-
     }
     @Override
     protected void onDestroy()
@@ -222,37 +215,48 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
     @Override
     public void onResponse(String resp)
     {
-
-        noGames.setVisibility(View.INVISIBLE);
-        Log.d("here", "marcel");
-        jsonCurrentGames = new ReadJSONCurrentGames(resp);
-        gameList.clear();
-        scoreboardAdapter.notifyDataSetChanged();
-
-        try
-        {
-            jsonCurrentGames.readJSON();
-            gameList = jsonCurrentGames.getGameList();
-
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-
-        scoreboardAdapter.setItems(gameList);
-        scoreboardAdapter.notifyDataSetChanged();
-        if(gameList.isEmpty())
-        {
-            noGames.setVisibility(View.VISIBLE);
-        }
+//
+//        noGames.setVisibility(View.INVISIBLE);
+//        Toast.makeText(getApplicationContext(), "Hello toast!!", Toast.LENGTH_LONG).show();
+//        jsonCurrentGames = new ReadJSONGamesInfo(resp);
+//        gameList.clear();
+//        scoreboardAdapter.notifyDataSetChanged();
+//
+//        try
+//        {
+//            jsonCurrentGames.readJSON();
+//            gameList = jsonCurrentGames.getGameList();
+//
+//        } catch (JSONException e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+//        scoreboardAdapter.setItems(gameList);
+//        scoreboardAdapter.notifyDataSetChanged();
+//        if(gameList.isEmpty())
+//        {
+//            noGames.setVisibility(View.VISIBLE);
+//        }
     }
-
     protected void formatDates()
     {
-        urlString = urlFormatter.format(todayDate);
+        urlDateString = urlFormatter.format(todayDate);
         todayString = dateBttnFormatter.format(todayDate);
-        todayButton.setText(todayString);
+    }
 
+    protected void setDateButton()
+    {
+        Date date = new Date();
+        String todayDate = dateBttnFormatter.format(date);
+        if(todayString.equals(todayDate))
+        {
+            todayButton.setText("Today");
+        }
+        else
+        {
+            todayButton.setText(todayString);
+        }
     }
 
     protected void initWidgets()

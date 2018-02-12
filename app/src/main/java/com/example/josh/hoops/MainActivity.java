@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        LocalDB local = LocalDB.getInstance();
+        local.query(MainActivity.this);
         currentGamesBtn = (Button) findViewById(R.id.currentGamesBtn);
         currentGamesBtn.setOnClickListener(new View.OnClickListener()
         {

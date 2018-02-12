@@ -12,14 +12,14 @@ import java.util.ArrayList;
  * Created by Josh on 1/21/2018.
  */
 
-public class ReadJSONCurrentGames
+public class ReadJSONGamesInfo
 {
     private String url;
     private GameData gameData;
     private ArrayList<GameData> gameList;
     private StringRequest stringRequest;
 
-    public ReadJSONCurrentGames(String jsonUrl)
+    public ReadJSONGamesInfo(String jsonUrl)
     {
         url = jsonUrl;
         gameList = new ArrayList<>();

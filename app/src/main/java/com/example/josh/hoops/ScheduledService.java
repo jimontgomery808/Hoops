@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -58,7 +57,7 @@ public class ScheduledService extends Service implements RequestHandler
                 volleyStringRequest = new VolleyStringRequest(rh,intentData);
                 rq.add(volleyStringRequest.startRequest());
             }
-        }, 0, 5000);
+        }, 0, 10000);
     }
 
 
@@ -72,9 +71,10 @@ public class ScheduledService extends Service implements RequestHandler
     @Override
     public void onResponse(String resp)
     {
-        Log.d("here", "gathered service");
         Intent intent = new Intent("JSON Info Update");
         intent.putExtra("JSONString", resp);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+
     }
 }
