@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity
 
     //the URL having the json data
     private Button currentGamesBtn;
+    private LocalDB local;
     //listview object
 
 
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocalDB local = LocalDB.getInstance();
+        local = LocalDB.getInstance();
         local.query(MainActivity.this);
         currentGamesBtn = (Button) findViewById(R.id.currentGamesBtn);
         currentGamesBtn.setOnClickListener(new View.OnClickListener()
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                local.close();
                 Intent intent = new Intent(MainActivity.this, CurrentGames.class);
                 startActivity(intent);
             }

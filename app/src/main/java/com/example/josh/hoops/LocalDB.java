@@ -34,15 +34,10 @@ public class LocalDB implements RequestHandler
 
         return instance;
     }
-//    private LocalDB(Context context)
-//    {
-//        dbHandler = new SQLiteDatabaseHandler(context);
-//        requestQueue = Volley.newRequestQueue(context);
-//        requestHandler = this;
-//        gameList = new ArrayList<>();
-//        VolleyStringRequest volley = new VolleyStringRequest(requestHandler, urlString);
-//        requestQueue.add(volley.startRequest());
-//    }
+    public void close()
+    {
+        dbHandler.close();
+    }
     public void query(Context context)
     {
         mContext = context;

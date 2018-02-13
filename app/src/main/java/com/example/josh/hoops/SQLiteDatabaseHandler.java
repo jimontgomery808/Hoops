@@ -61,7 +61,7 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper
                 + "vTeamWatchLong TEXT, " +"hTeamWatchShort TEXT, " + "hTeamWatchLong TEXT)";
 
         db.execSQL(CREATION_TABLE);
-        String sql = "INSERT INTO all_scoreboards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,);";
+        String sql = "INSERT INTO all_scoreboards VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
         SQLiteStatement statement = db.compileStatement(sql);
         db.beginTransaction();
         for(int i = 0; i < gameDataList.size(); i ++)
@@ -86,8 +86,8 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper
             statement.bindString(16, data.gethTeamScore());
             statement.bindString(17, data.getvTeamWatchShort());
             statement.bindString(18, data.getvTeamWatchLong());
-            statement.bindString(19, data.gethTeamWatchLong());
-            statement.bindString(20, data.gethTeamWatchShort());
+            statement.bindString(19, data.gethTeamWatchShort());
+            statement.bindString(20, data.gethTeamWatchLong());
             statement.execute();
         }
     }
@@ -186,10 +186,5 @@ public class SQLiteDatabaseHandler extends SQLiteOpenHelper
             } while (cursor.moveToNext());
         }
         return gameData;
-    }
-
-    public void drop()
-    {
-
     }
 }

@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -27,7 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class CurrentGames extends AppCompatActivity implements RequestHandler
+public class CurrentGames extends AppCompatActivity
 {
     private ReadJSONGamesInfo jsonCurrentGames;
     private List<GameData> gameList = new ArrayList<>();
@@ -49,7 +48,6 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
     private TextView noGames;
     private LocalDB localDB;
     private long lastClickTime = 0;
-    private List<GameData> nonLiveGames;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -94,15 +92,23 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
                 {
                     stopService(scheduledVolleyIntent);
                     List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
+                    if(nonLiveGames.isEmpty())
+                    {
+                        noGames.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        noGames.setVisibility(View.INVISIBLE);
+                    }
                     scoreboardAdapter.setItems(nonLiveGames);
                     scoreboardAdapter.notifyDataSetChanged();
+
                 }
                 else
                 {
                     scoreboardAdapter.setItems(gameList);
                     scoreboardAdapter.notifyDataSetChanged();
                     startService(scheduledVolleyIntent);
-                    //cachedList.clear();
                 }
             }
         });
@@ -139,6 +145,14 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
                 {
                     stopService(scheduledVolleyIntent);
                     List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
+                    if(nonLiveGames.isEmpty())
+                    {
+                        noGames.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        noGames.setVisibility(View.INVISIBLE);
+                    }
                     scoreboardAdapter.setItems(nonLiveGames);
                     scoreboardAdapter.notifyDataSetChanged();
                 }
@@ -147,7 +161,6 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
                     scoreboardAdapter.setItems(gameList);
                     scoreboardAdapter.notifyDataSetChanged();
                     startService(scheduledVolleyIntent);
-                    //cachedList.clear();
                 }
             }
         });
@@ -172,7 +185,6 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
                 gameList = jsonCurrentGames.getGameList();
                 if(todayButton.getText().equals("Today"))
                 {
-                    Toast.makeText(getApplicationContext(), "updating rView", Toast.LENGTH_LONG).show();
                     scoreboardAdapter.setItems(gameList);
                     scoreboardAdapter.notifyDataSetChanged();
                 }
@@ -212,33 +224,6 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
         Log.d("THE STATE IS", "DESTROY");
     }
 
-    @Override
-    public void onResponse(String resp)
-    {
-//
-//        noGames.setVisibility(View.INVISIBLE);
-//        Toast.makeText(getApplicationContext(), "Hello toast!!", Toast.LENGTH_LONG).show();
-//        jsonCurrentGames = new ReadJSONGamesInfo(resp);
-//        gameList.clear();
-//        scoreboardAdapter.notifyDataSetChanged();
-//
-//        try
-//        {
-//            jsonCurrentGames.readJSON();
-//            gameList = jsonCurrentGames.getGameList();
-//
-//        } catch (JSONException e)
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        scoreboardAdapter.setItems(gameList);
-//        scoreboardAdapter.notifyDataSetChanged();
-//        if(gameList.isEmpty())
-//        {
-//            noGames.setVisibility(View.VISIBLE);
-//        }
-    }
     protected void formatDates()
     {
         urlDateString = urlFormatter.format(todayDate);
@@ -268,7 +253,6 @@ public class CurrentGames extends AppCompatActivity implements RequestHandler
         noGames = (TextView) findViewById(R.id.noGames);
         noGames.setVisibility(View.INVISIBLE);
     }
-
 
     protected void initLayouts()
     {

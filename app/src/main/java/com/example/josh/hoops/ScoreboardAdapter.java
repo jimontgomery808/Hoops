@@ -243,7 +243,14 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
 
         if(gameData.getQuarter() == 0)
         {
-            clock = gameData.getStartTime();
+            if(gameData.isGameActivated())
+            {
+                clock = "Pregame";
+            }
+            else
+            {
+                clock = gameData.getStartTime();
+            }
         }
         else if(gameData.isHalfTime())
         {
@@ -252,6 +259,10 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
         else if(gameData.getQuarter() == 4 && !gameData.isGameActivated())
         {
             clock = "Final";
+        }
+        else if(gameData.getClock().equals("0.0"))
+        {
+            clock = "End of Q" + gameData.getQuarter();
         }
         else if(gameData.getQuarter() > 4)
         {
@@ -280,15 +291,9 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
                 clock = "Final " + overTime;
             }
         }
-
-        else if(gameData.getClock().equals("0.0"))
-        {
-            clock = "End of Q" + gameData.getQuarter();
-        }
-
         else
         {
-            clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " +gameData.getClock();
+            clock = "Q" + String.valueOf(gameData.getQuarter()) + "  " + gameData.getClock();
         }
 
         return clock;
