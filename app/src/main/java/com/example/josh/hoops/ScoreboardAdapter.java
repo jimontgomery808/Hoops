@@ -22,6 +22,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
     private List<String> hLogoList;
     private String url1 = "http://ec2-52-14-204-231.us-east-2.compute.amazonaws.com/";
     private String url2 = ".png";
+    private  int rowIndex = -1;
 
     public void clearPreviousTeams()
     {
@@ -56,6 +57,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
             clock = (TextView) view.findViewById(R.id.clock);
             broadcast = (TextView) view.findViewById(R.id.broadcast);
         }
+
     }
 
     public ScoreboardAdapter(Context mContext, List<GameData> list)
@@ -94,14 +96,14 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
 
-        View itemView = LayoutInflater.from(parent.getContext())
+        final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_scoreboard, null, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position)
+    public void onBindViewHolder(final MyViewHolder holder, final int position)
     {
         GameData gameData = gameList.get(position);
         String vRecord = ("(" + gameData.getvTeamWinRecord() + "-" + gameData.getvTeamLossRecord() + ")");
@@ -140,6 +142,16 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.My
 
         holder.clock.setText(clock);
         holder.broadcast.setText(broadcast);
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                //Toast.makeText(mContext, vScore, Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
     public void setItems(List<GameData> persons)

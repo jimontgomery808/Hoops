@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:weightSum="3">
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="match_parent"
             android:id="@+id/prevBttn"
             android:text="prev"
@@ -23,18 +23,17 @@
             android:textColor="@color/text_light"
             android:background="@color/colorPrimaryDark"/>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="match_parent"
             android:id="@+id/todayBttn"
             android:text="Today"
             android:drawableLeft="@drawable/calendar"
-            android:textAlignment="center"
+            android:textAlignment="viewStart"
             android:layout_weight="1"
-            android:paddingLeft="5dp"
             android:textColor="@color/text_light"
             android:background="@color/colorPrimaryDark"/>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="match_parent"
             android:id="@+id/nextBttn"
             android:text="next"

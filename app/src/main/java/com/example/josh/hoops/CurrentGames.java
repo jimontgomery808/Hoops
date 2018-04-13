@@ -26,7 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class CurrentGames extends AppCompatActivity
+public class CurrentGames extends AppCompatActivity implements View.OnClickListener
 {
     private ReadJSONGamesInfo jsonCurrentGames;
     private List<GameData> gameList = new ArrayList<>();
@@ -61,109 +61,11 @@ public class CurrentGames extends AppCompatActivity
         initLayouts();
         formatDates();
         localDB = LocalDB.getInstance();
+        localDB.query(CurrentGames.this);
 
-        prevButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if (SystemClock.elapsedRealtime() - lastClickTime < 10)
-                {
-                    return;
-                }
-                lastClickTime = SystemClock.elapsedRealtime();
-                Calendar cal = Calendar.getInstance();
-                try
-                {
-                    cal.setTime(dateBttnFormatter.parse(todayString));
-                }
-                catch (ParseException e)
-                {
-                    e.printStackTrace();
-                }
+        prevButton.setOnClickListener(this);
+        nextButton.setOnClickListener(this);
 
-                cal.add(Calendar.DATE, -1);
-                todayDate = cal.getTime();
-                urlDateString = urlFormatter.format(todayDate);
-                formatDates();
-                setDateButton();
-
-                if(!todayButton.getText().equals("Today"))
-                {
-                    stopService(scheduledVolleyIntent);
-                    List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
-                    if(nonLiveGames.isEmpty())
-                    {
-                        noGames.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
-                        noGames.setVisibility(View.INVISIBLE);
-                    }
-                    scoreboardAdapter.setItems(nonLiveGames);
-                    scoreboardAdapter.notifyDataSetChanged();
-
-                }
-                else
-                {
-                    scoreboardAdapter.setItems(gameList);
-                    scoreboardAdapter.notifyDataSetChanged();
-                    startService(scheduledVolleyIntent);
-                }
-            }
-        });
-
-
-        nextButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if (SystemClock.elapsedRealtime() - lastClickTime < 10){
-                    return;
-                }
-                lastClickTime = SystemClock.elapsedRealtime();
-
-                Calendar cal = Calendar.getInstance();
-                try
-                {
-                    cal.setTime(dateBttnFormatter.parse(todayString));
-                }
-                catch (ParseException e)
-                {
-                    e.printStackTrace();
-                }
-
-                cal.add(Calendar.DATE, 1);
-                todayDate = cal.getTime();
-                urlDateString = urlFormatter.format(todayDate);
-                formatDates();
-                setDateButton();
-
-
-                if(!todayButton.getText().equals("Today"))
-                {
-                    stopService(scheduledVolleyIntent);
-                    List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
-                    if(nonLiveGames.isEmpty())
-                    {
-                        noGames.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
-                        noGames.setVisibility(View.INVISIBLE);
-                    }
-                    scoreboardAdapter.setItems(nonLiveGames);
-                    scoreboardAdapter.notifyDataSetChanged();
-                }
-                else
-                {
-                    scoreboardAdapter.setItems(gameList);
-                    scoreboardAdapter.notifyDataSetChanged();
-                    startService(scheduledVolleyIntent);
-                }
-            }
-        });
         mMessageReceiver = new BroadcastReceiver()
         {
             @Override
@@ -269,6 +171,106 @@ public class CurrentGames extends AppCompatActivity
         rView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         rView.setNestedScrollingEnabled(true);
         scoreboardAdapter.setItems(gameList);
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        Calendar cal;
+        switch (view.getId())
+        {
+            case R.id.prevBttn:
+                if (SystemClock.elapsedRealtime() - lastClickTime < 10)
+                {
+                    return;
+                }
+                lastClickTime = SystemClock.elapsedRealtime();
+                cal = Calendar.getInstance();
+                try
+                {
+                    cal.setTime(dateBttnFormatter.parse(todayString));
+                }
+                catch (ParseException e)
+                {
+                    e.printStackTrace();
+                }
+
+                cal.add(Calendar.DATE, -1);
+                todayDate = cal.getTime();
+                urlDateString = urlFormatter.format(todayDate);
+                formatDates();
+                setDateButton();
+
+                if(!todayButton.getText().equals("Today"))
+                {
+                    stopService(scheduledVolleyIntent);
+                    List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
+                    if(nonLiveGames.isEmpty())
+                    {
+                        noGames.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        noGames.setVisibility(View.INVISIBLE);
+                    }
+                    scoreboardAdapter.setItems(nonLiveGames);
+                    scoreboardAdapter.notifyDataSetChanged();
+
+                }
+                else
+                {
+                    scoreboardAdapter.setItems(gameList);
+                    scoreboardAdapter.notifyDataSetChanged();
+                    startService(scheduledVolleyIntent);
+                }
+            break;
+
+            case R.id.nextBttn:
+                if (SystemClock.elapsedRealtime() - lastClickTime < 10)
+                {
+                    return;
+                }
+                lastClickTime = SystemClock.elapsedRealtime();
+                cal = Calendar.getInstance();
+                try
+                {
+                    cal.setTime(dateBttnFormatter.parse(todayString));
+                }
+                catch (ParseException e)
+                {
+                    e.printStackTrace();
+                }
+
+                cal.add(Calendar.DATE, 1);
+                todayDate = cal.getTime();
+                urlDateString = urlFormatter.format(todayDate);
+                formatDates();
+                setDateButton();
+
+                if(!todayButton.getText().equals("Today"))
+                {
+                    stopService(scheduledVolleyIntent);
+                    List<GameData> nonLiveGames = localDB.getQueryList(urlDateString);
+                    if(nonLiveGames.isEmpty())
+                    {
+                        noGames.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        noGames.setVisibility(View.INVISIBLE);
+                    }
+                    scoreboardAdapter.setItems(nonLiveGames);
+                    scoreboardAdapter.notifyDataSetChanged();
+
+                }
+                else
+                {
+                    scoreboardAdapter.setItems(gameList);
+                    scoreboardAdapter.notifyDataSetChanged();
+                    startService(scheduledVolleyIntent);
+                }
+            break;
+        }
     }
 }
 
